@@ -1,0 +1,32 @@
+server:
+  servlet:
+    context-path: /spring-zuul-api-resource
+  port: 8081
+
+kafka:
+  bootstrapAddress: ${KAFKA_ADDRESS:localhost:9092}
+
+message:
+  topic:
+    created-deposits:
+      name: ${DEPOSIT_CREATED_DEPOSITS_TOPIC_NAME:createdDeposits}
+    changed-deposits:
+      name: ${DEPOSIT_CHANGED_DEPOSITS_TOPIC_NAME:changedDeposits}
+    removed-deposits:
+      name: ${DEPOSIT_REMOVED_DEPOSITS_TOPIC_NAME:changedDeposits}
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DEPOSIT_DB_DATASOURCE_URL:jdbc:postgresql://localhost:5432/deposit-service-db}
+    username: ${DEPOSIT_DB_DATASOURCE_USER:postgres}
+    password: ${DEPOSIT_DB_DATASOURCE_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
