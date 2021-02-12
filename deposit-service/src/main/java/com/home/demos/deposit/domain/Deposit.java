@@ -1,6 +1,8 @@
 package com.home.demos.deposit.domain;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
@@ -66,5 +68,9 @@ public class Deposit {
     @Override
     public int hashCode() {
         return Objects.hash(depositID, depositInfo);
+    }
+
+    public boolean isOpen() {
+        return DepositState.OPENED.equals(depositInfo.getState());
     }
 }
