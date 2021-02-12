@@ -37,24 +37,8 @@ public class Deposit {
         depositInfo.closeDeposit();
     }
 
-    public DepositID getDepositID() {
-        return depositID;
-    }
-
-    public void setDepositID(DepositID depositID) {
-        this.depositID = depositID;
-    }
-
-    public DepositInfo getDepositInfo() {
-        return depositInfo;
-    }
-
     public boolean isEmpty() {
         return depositID.getId() == null;
-    }
-
-    public void setDepositInfo(DepositInfo depositInfo) {
-        this.depositInfo = depositInfo;
     }
 
     @Override
@@ -71,6 +55,10 @@ public class Deposit {
     }
 
     public boolean isOpen() {
+        if (depositInfo == null || depositInfo.getState() == null) {
+            return false;
+        }
+
         return DepositState.OPENED.equals(depositInfo.getState());
     }
 }
