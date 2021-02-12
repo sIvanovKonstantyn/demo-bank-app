@@ -1,4 +1,4 @@
-package com.home.demos.deposit.domain;
+package com.home.demos.deposit.infrastructure;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

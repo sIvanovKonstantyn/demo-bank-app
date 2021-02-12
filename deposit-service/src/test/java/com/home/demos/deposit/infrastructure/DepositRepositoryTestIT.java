@@ -1,5 +1,6 @@
-package com.home.demos.deposit.domain;
+package com.home.demos.deposit.infrastructure;
 
+import com.home.demos.deposit.domain.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,6 @@
 package com.home.demos.deposit.infrastructure;
 
 import com.home.demos.deposit.domain.Deposit;
-import com.home.demos.deposit.domain.TestPostgresqlContainer;
-import com.home.demos.deposit.infrastructure.*;
 import com.home.demos.deposit.infrastructure.configuration.KafkaProducerConfiguration;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
