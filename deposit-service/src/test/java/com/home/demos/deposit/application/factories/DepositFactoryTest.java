@@ -1,6 +1,7 @@
 package com.home.demos.deposit.application.factories;
 
 import com.home.demos.deposit.domain.Deposit;
+import com.home.demos.deposit.domain.DepositState;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -14,13 +15,13 @@ class DepositFactoryTest {
     @Test
     void createNewDeposit() {
         Deposit createdDeposit = depositFactory.createNewDeposit(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
+                "new deposit",
+                1L,
+                "capitalizationType",
+                840,
+                "depositType",
+                LocalDateTime.now(),
+                1
         );
 
         assertTrue(createdDeposit.isOpen());

@@ -15,6 +15,10 @@ public class Deposit {
     private DepositInfo depositInfo;
 
     public Deposit create(DepositInfo depositInfo) {
+        if (depositInfo == null || depositInfo.isEmpty()) {
+            throw new IllegalArgumentException("deposit info could not be empty");
+        }
+
         this.depositInfo = depositInfo;
         return this;
     }
@@ -34,6 +38,11 @@ public class Deposit {
     }
 
     public void repay() {
+
+        if (depositInfo == null) {
+            throw new IllegalStateException("deposit info should be present");
+        }
+
         depositInfo.closeDeposit();
     }
 
@@ -61,4 +70,30 @@ public class Deposit {
 
         return DepositState.OPENED.equals(depositInfo.getState());
     }
+
+    public boolean isClosed() {
+        if (depositInfo == null || depositInfo.getState() == null) {
+            return false;
+        }
+
+        return DepositState.CLOSED.equals(depositInfo.getState());
+    }
+
+    public boolean hasSameInfo(DepositInfo depositInfo) {
+        if (depositInfo == null) {
+            return false;
+        }
+
+        return depositInfo.equals(this.depositInfo);
+    }
+
+    public Long takeSum() {
+        if (depositInfo == null) {
+            return 0L;
+        }
+
+        return depositInfo.getSum();
+    }
+
+
 }

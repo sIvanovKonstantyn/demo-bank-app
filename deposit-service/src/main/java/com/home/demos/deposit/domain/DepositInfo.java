@@ -127,4 +127,18 @@ public class DepositInfo implements Serializable {
     public int hashCode() {
         return Objects.hash(name, state, sum, capitalizationType, currencyCode, depositType, closeDate, incomeRate);
     }
+
+    public boolean isEmpty() {
+        return name == null
+                || name.isEmpty()
+                || state == null
+                || sum == null
+                || capitalizationType == null
+                || capitalizationType.isEmpty()
+                || currencyCode == null
+                || depositType == null
+                || depositType.isEmpty()
+                || closeDate == null
+                || incomeRate == null;
+    }
 }

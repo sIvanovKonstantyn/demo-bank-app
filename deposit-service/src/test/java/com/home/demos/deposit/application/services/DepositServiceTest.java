@@ -1,10 +1,7 @@
 package com.home.demos.deposit.application.services;
 
 import com.home.demos.deposit.application.factories.DepositFactory;
-import com.home.demos.deposit.domain.Deposit;
-import com.home.demos.deposit.domain.DepositInfo;
-import com.home.demos.deposit.domain.DepositRepository;
-import com.home.demos.deposit.domain.QueryAPINotificator;
+import com.home.demos.deposit.domain.*;
 import com.home.demos.deposit.infrastructure.DepositChangedMessage;
 import com.home.demos.deposit.infrastructure.DepositCreatedMessage;
 import com.home.demos.deposit.infrastructure.DepositRemovedMessage;
@@ -18,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +47,16 @@ class DepositServiceTest {
         )).thenReturn(new Deposit());
 
         Mockito.lenient().when(depositRepository.save(Mockito.any())).thenReturn(new Deposit());
-        Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.of(new Deposit().create(new DepositInfo())));
+        Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.of(new Deposit().create(new DepositInfo(
+                "new deposit",
+                DepositState.OPENED,
+                1L,
+                "capitalizationType",
+                840,
+                "depositType",
+                LocalDateTime.now(),
+                1
+        ))));
     }
 
     @Test
