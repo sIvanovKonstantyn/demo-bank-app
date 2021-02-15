@@ -5,16 +5,6 @@ plugins {
 
 version = '1.0.0'
 
-ext {
-    set('testcontainersVersion', "1.15.1")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
-    }
-}
-
 dependencies {
 
     /*
@@ -35,11 +25,8 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-    testImplementation 'org.postgresql:postgresql'
-
-    testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.testcontainers:kafka'
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.kafka:spring-kafka-test:2.6.5'
 
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
     testImplementation 'com.fasterxml.jackson.core:jackson-core:2.12.1'

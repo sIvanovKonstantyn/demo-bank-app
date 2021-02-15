@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Profile("enable-infrastructure-layer")
+@Profile({"main", "kafka-test"})
 public class KafkaTopicConfiguration {
 
     @Value(value = "${kafka.bootstrapAddress}")

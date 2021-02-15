@@ -3,10 +3,14 @@ package com.home.demos.deposit.infrastructure;
 import com.home.demos.deposit.domain.QueryAPINotificator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
+@PropertySource("classpath:application.yml")
+@Profile({"main", "kafka-test"})
 public class QueryAPINotificatorKafkaImpl implements QueryAPINotificator {
 
     @Value(value = "${message.topic.created-deposits.name}")
@@ -20,21 +24,6 @@ public class QueryAPINotificatorKafkaImpl implements QueryAPINotificator {
 
     @Autowired
     private KafkaTemplate<String, DepositMessage> kafkaTemplate;
-
-    public QueryAPINotificatorKafkaImpl(
-            String createdDepositsTopicName,
-            String changedDepositsTopicName,
-            String removedDepositsTopicName,
-            KafkaTemplate<String, DepositMessage> kafkaTemplate
-    ) {
-        this.createdDepositsTopicName = createdDepositsTopicName;
-        this.changedDepositsTopicName = changedDepositsTopicName;
-        this.removedDepositsTopicName = removedDepositsTopicName;
-        this.kafkaTemplate = kafkaTemplate;
-    }
-
-    public QueryAPINotificatorKafkaImpl() {
-    }
 
     @Override
     public void notify(DepositCreatedMessage message) {

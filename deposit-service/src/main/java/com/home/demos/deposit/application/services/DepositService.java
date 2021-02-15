@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-@Profile("enable-application-layer")
+@Profile({"main","application-layer-test"})
 public class DepositService {
     @Autowired
     private DepositFactory depositFactory;

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Profile("enable-infrastructure-layer")
+@Profile({"main", "kafka-test"})
 public class KafkaProducerConfiguration {
 
     @Value(value = "${kafka.bootstrapAddress}")
@@ -30,11 +30,24 @@ public class KafkaProducerConfiguration {
     public ProducerFactory<String, DepositMessage> takeProducerFactory(String address) {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, address);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
         return new DefaultKafkaProducerFactory<>(configProps);
     }
+
+    @Bean
+    public KafkaTemplate<String, String> kafkaStringTemplate() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        ProducerFactory <String, String> producerFactory =  new DefaultKafkaProducerFactory<>(configProps);
+
+        return new KafkaTemplate<String, String>(producerFactory);
+    }
+
 
     @Bean
     public KafkaTemplate<String, DepositMessage> kafkaTemplate() {

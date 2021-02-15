@@ -1,35 +1,26 @@
 package com.home.demos.deposit.infrastructure;
 
+import com.home.demos.deposit.DepositApplication;
 import com.home.demos.deposit.domain.*;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Testcontainers
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@SpringBootTest("db-test")
 class DepositRepositoryTestIT {
-
-    @Container
-    public static PostgreSQLContainer postgreSQLContainer = TestPostgresqlContainer.getInstance();
 
     @Autowired
     private DepositRepository depositRepository;
-
-    @AfterAll
-    static void shutdownAll() {
-        postgreSQLContainer.stop();
-    }
 
     @Test
     void save_whenSavingWasSuccessful_thenSavedDepositShouldNotBeEmpty() {

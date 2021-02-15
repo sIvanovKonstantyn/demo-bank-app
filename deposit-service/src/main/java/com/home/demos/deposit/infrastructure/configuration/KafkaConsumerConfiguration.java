@@ -1,55 +1,76 @@
 package com.home.demos.deposit.infrastructure.configuration;
 
 import com.home.demos.deposit.application.services.DepositService;
-import com.home.demos.deposit.infrastructure.CreateDepositCommand;
-import com.home.demos.deposit.infrastructure.RepayDepositCommand;
-import com.home.demos.deposit.infrastructure.ReplenishDepositCommand;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
-@Profile("enable-infrastructure-layer")
+@Profile({"main", "kafka-test"})
 public class KafkaConsumerConfiguration {
+
+    @Value(value = "${kafka.bootstrapAddress}")
+    private String bootstrapAddress;
 
     @Autowired
     private DepositService depositService;
 
-    @KafkaListener(
-            topics = "createDepositCommands",
-            containerFactory = "createDepositCommandsKafkaListenerContainerFactory")
-    public void createDepositCommandListener(CreateDepositCommand createDepositCommand) {
-        depositService.createDeposit(
-                createDepositCommand.getRequestID(),
-                createDepositCommand.getName(),
-                createDepositCommand.getSum(),
-                createDepositCommand.getCapitalizationType(),
-                createDepositCommand.getCurrencyCode(),
-                createDepositCommand.getDepositType(),
-                createDepositCommand.getCloseDate(),
-                createDepositCommand.getIncomeRate()
-        );
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String>
+    createDepositCommandsKafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory("createDepositCommands"));
+        return factory;
     }
 
-    @KafkaListener(
-            topics = "replenishDepositCommands",
-            containerFactory = "replenishDepositCommandsKafkaListenerContainerFactory")
-    public void replenishDepositCommandListener(ReplenishDepositCommand replenishDepositCommand) {
-        depositService.replenishDeposit(
-                replenishDepositCommand.getRequestID(),
-                replenishDepositCommand.getDepositID(),
-                replenishDepositCommand.getSum()
-        );
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String>
+    replenishDepositCommandsKafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory("replenishDepositCommands"));
+        return factory;
     }
 
-    @KafkaListener(
-            topics = "repayDepositCommands",
-            containerFactory = "replenishDepositCommandsKafkaListenerContainerFactory")
-    public void repayDepositCommandListener(RepayDepositCommand repayDepositCommand) {
-        depositService.repayDeposit(
-                repayDepositCommand.getRequestID(),
-                repayDepositCommand.getDepositID()
-        );
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String>
+    repayDepositCommandsKafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory("repayDepositCommands"));
+        return factory;
     }
+
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory(String topicName) {
+        Map<String, Object> props = new HashMap<>();
+        props.put(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                bootstrapAddress);
+        props.put(
+                ConsumerConfig.GROUP_ID_CONFIG,
+                topicName);
+        props.put(
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                StringDeserializer.class);
+        props.put(
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                StringDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(props);
+    }
+
 }

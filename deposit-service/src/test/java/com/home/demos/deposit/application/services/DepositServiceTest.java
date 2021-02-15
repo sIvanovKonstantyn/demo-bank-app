@@ -5,7 +5,6 @@ import com.home.demos.deposit.domain.*;
 import com.home.demos.deposit.infrastructure.DepositChangedMessage;
 import com.home.demos.deposit.infrastructure.DepositCreatedMessage;
 import com.home.demos.deposit.infrastructure.DepositRemovedMessage;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -116,7 +115,7 @@ class DepositServiceTest {
     void replenishDeposit_whenReplenishDepositCalledWithWrongId_thenShouldBeIllegalArgsException() {
         Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-        IllegalArgumentException thrownException = Assert.assertThrows(
+        IllegalArgumentException thrownException = Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> depositService.replenishDeposit(
                         null,
@@ -133,7 +132,7 @@ class DepositServiceTest {
     void repayDeposit_whenRepayDepositCalled_thenAllDependedMethodsShouldBeCalled() {
         Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-        IllegalArgumentException thrownException = Assert.assertThrows(
+        IllegalArgumentException thrownException = Assertions.assertThrows(
                 IllegalArgumentException.class,
                 () -> depositService.repayDeposit(null, null)
         );

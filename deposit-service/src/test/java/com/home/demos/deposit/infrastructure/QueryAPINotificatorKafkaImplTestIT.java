@@ -1,84 +1,54 @@
 package com.home.demos.deposit.infrastructure;
 
 import com.home.demos.deposit.domain.Deposit;
-import com.home.demos.deposit.infrastructure.configuration.KafkaProducerConfiguration;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.*;
-import org.rnorth.ducttape.unreliables.Unreliables;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
-import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Testcontainers
 @SpringBootTest
-@ActiveProfiles("test")
+@DirtiesContext
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@ActiveProfiles({"kafka-test", "application-layer-test"})
 class QueryAPINotificatorKafkaImplTestIT {
 
-    private static final String TOPIC_NAME = "testTopic";
+    @Value(value = "${kafka.bootstrapAddress}")
+    private String bootstrapAddress;
 
-    @Container
-    public static PostgreSQLContainer postgreSQLContainer = TestPostgresqlContainer.getInstance();
+    @Value(value = "${message.topic.created-deposits.name}")
+    private String createdDepositsTopicName;
 
-    @Container
-    public static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
+    @Value(value = "${message.topic.changed-deposits.name}")
+    private String changedDepositsTopicName;
 
-    private static String bootstrapServers;
+    @Value(value = "${message.topic.removed-deposits.name}")
+    private String removedDepositsTopicName;
 
+    @Autowired
     private QueryAPINotificatorKafkaImpl queryAPINotificatorKafka;
+
     private KafkaConsumer<String, DepositMessage> consumer;
-
-    @BeforeAll
-    static void setupAll() throws InterruptedException, ExecutionException, TimeoutException {
-        kafkaContainer.start();
-        bootstrapServers = kafkaContainer.getBootstrapServers();
-
-        AdminClient adminClient = AdminClient.create(ImmutableMap.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers));
-        Collection<NewTopic> topics = Collections.singletonList(new NewTopic(TOPIC_NAME, 1, (short) 1));
-
-        adminClient.createTopics(topics).all().get(30, TimeUnit.SECONDS);
-    }
-
-    @AfterAll
-    static void shutdownAll() {
-        kafkaContainer.stop();
-        postgreSQLContainer.stop();
-    }
 
     @BeforeEach
     void setupEach() {
-        KafkaTemplate<String, DepositMessage> kafkaTemplate = new KafkaTemplate<>(new KafkaProducerConfiguration().takeProducerFactory(bootstrapServers));
-
-
-        queryAPINotificatorKafka = new QueryAPINotificatorKafkaImpl(
-                TOPIC_NAME,
-                TOPIC_NAME,
-                TOPIC_NAME,
-                kafkaTemplate
-        );
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "tc-" + UUID.randomUUID());
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         JsonDeserializer<String> stringJsonDeserializer = new JsonDeserializer<>();
         stringJsonDeserializer.addTrustedPackages("com.home.demos.deposit.infrastructure");
@@ -86,22 +56,18 @@ class QueryAPINotificatorKafkaImplTestIT {
         JsonDeserializer<DepositMessage> depositMessageJsonDeserializer = new JsonDeserializer<>();
         depositMessageJsonDeserializer.addTrustedPackages("com.home.demos.deposit.infrastructure");
 
+
         consumer = new KafkaConsumer<>(
-                ImmutableMap.of(
-                        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                        ConsumerConfig.GROUP_ID_CONFIG, "tc-" + UUID.randomUUID(),
-                        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"
-                ),
+                properties,
                 stringJsonDeserializer,
                 depositMessageJsonDeserializer
         );
 
-        consumer.subscribe(Collections.singletonList(TOPIC_NAME));
-    }
-
-    @AfterEach
-    void shutdownEach() {
-        consumer.unsubscribe();
+        consumer.subscribe(Arrays.asList(
+                createdDepositsTopicName,
+                changedDepositsTopicName,
+                removedDepositsTopicName
+        ));
     }
 
     @Test
@@ -115,25 +81,15 @@ class QueryAPINotificatorKafkaImplTestIT {
         queryAPINotificatorKafka.notify(changedMessage);
         queryAPINotificatorKafka.notify(removedMessage);
 
-        Unreliables.retryUntilTrue(10, TimeUnit.SECONDS, () -> {
-            ConsumerRecords<String, DepositMessage> records = consumer.poll(Duration.ofMillis(100));
+        ConsumerRecords<String, DepositMessage> polledData = consumer.poll(Duration.ofMillis(1000));
 
-            if (records.isEmpty()) {
-                return false;
-            }
+        Assertions.assertEquals(Integer.valueOf(3), polledData.count());
 
-            Assertions.assertThat(records)
-                    .hasSize(3)
-                    .extracting(ConsumerRecord::topic, ConsumerRecord::key, ConsumerRecord::value)
-                    .containsAll(
-                            Arrays.asList(
-                                    Tuple.tuple(TOPIC_NAME, null, createdMessage),
-                                    Tuple.tuple(TOPIC_NAME, null, changedMessage),
-                                    Tuple.tuple(TOPIC_NAME, null, removedMessage)
-                            )
-                    );
+        List<DepositMessage> data = polledData.partitions().stream()
+                .flatMap(topicPartition -> polledData.records(topicPartition).stream())
+                .map(ConsumerRecord::value)
+                .collect(Collectors.toList());
 
-            return true;
-        });
+        Assertions.assertTrue(data.containsAll(Arrays.asList(createdMessage, changedMessage, removedMessage)));
     }
 }

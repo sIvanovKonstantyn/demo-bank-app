@@ -13,7 +13,7 @@ message:
     changed-deposits:
       name: ${DEPOSIT_CHANGED_DEPOSITS_TOPIC_NAME:changedDeposits}
     removed-deposits:
-      name: ${DEPOSIT_REMOVED_DEPOSITS_TOPIC_NAME:changedDeposits}
+      name: ${DEPOSIT_REMOVED_DEPOSITS_TOPIC_NAME:removedDeposits}
 
 spring:
   datasource:
