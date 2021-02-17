@@ -1,7 +1,7 @@
 # Bank deposit service demo:
 https://www.baeldung.com/sonar-qube
 docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
-6c8686176ed9a728703017b027931a17d2b1f9fd
+afc36e5bc60d670dd3d2cff48539e380db745f
 
 -- start sonarqube
 docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
