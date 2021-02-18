@@ -44,7 +44,7 @@ public class KafkaProducerConfiguration {
 
         ProducerFactory <String, String> producerFactory =  new DefaultKafkaProducerFactory<>(configProps);
 
-        return new KafkaTemplate<String, String>(producerFactory);
+        return new KafkaTemplate<>(producerFactory);
     }
 
 
