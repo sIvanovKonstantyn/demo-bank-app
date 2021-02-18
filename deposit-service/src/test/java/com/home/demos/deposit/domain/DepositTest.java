@@ -47,12 +47,6 @@ class DepositTest {
     }
 
     @Test
-    void createWhenEverythingGoesRightDepositInfoShouldBeSet() {
-        Deposit createdDeposit = takeCreatedDeposit();
-        assertTrue(createdDeposit.hasSameInfo(depositInfo));
-    }
-
-    @Test
     void createWhenInfoIsEmptyIllegalArgumentShouldBeThrown() {
 
         IllegalArgumentException thrown = assertThrows(

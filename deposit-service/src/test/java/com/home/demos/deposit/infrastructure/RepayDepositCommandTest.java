@@ -1,7 +1,5 @@
 package com.home.demos.deposit.infrastructure;
 
-import com.home.demos.deposit.domain.Deposit;
-import com.home.demos.deposit.domain.DepositID;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
