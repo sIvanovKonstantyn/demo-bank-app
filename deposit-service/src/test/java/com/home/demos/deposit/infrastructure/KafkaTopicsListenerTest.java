@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest
 @DirtiesContext
 @ExtendWith(MockitoExtension.class)
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9093", "port=9093"})
 @ActiveProfiles({"kafka-test", "application-layer-test"})
 class KafkaTopicsListenerTest {
 

@@ -4,7 +4,7 @@ server:
   port: 8081
 
 kafka:
-  bootstrapAddress: ${KAFKA_ADDRESS:localhost:9092}
+  bootstrapAddress: ${KAFKA_ADDRESS:localhost:9093}
 
 message:
   topic:

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9093", "port=9093"})
 @ActiveProfiles({"kafka-test", "application-layer-test"})
 class QueryAPINotificatorKafkaImplTestIT {
 
