@@ -17,72 +17,38 @@ class DepositTest {
     private static final int INCOME_RATE = 1;
 
     private final Deposit deposit = new Deposit();
+    private final DepositInfo depositInfo = new DepositInfo(
+            NEW_DEPOSIT,
+            DepositState.OPENED,
+            SUM,
+            CAPITALIZATION_TYPE,
+            CURRENCY_CODE,
+            DEPOSIT_TYPE,
+            CLOSE_DATE,
+            INCOME_RATE
+    );
 
     @Test
     void hasSameInfoWhenInfoObjectsAreEqualThenShouldBeSuccessfulResponse() {
-        DepositInfo depositInfo = new DepositInfo(
-                NEW_DEPOSIT,
-                DepositState.OPENED,
-                SUM,
-                CAPITALIZATION_TYPE,
-                CURRENCY_CODE,
-                DEPOSIT_TYPE,
-                CLOSE_DATE,
-                INCOME_RATE
-        );
-
-        Deposit createdDeposit = this.deposit.create(depositInfo);
+        Deposit createdDeposit = takeCreatedDeposit();
         assertTrue(createdDeposit.hasSameInfo(depositInfo));
     }
 
     @Test
     void hasSameInfoWhenInfoObjectsAreNotEqualThenShouldBeFailedResponse() {
-        DepositInfo depositInfo = new DepositInfo(
-                NEW_DEPOSIT,
-                DepositState.OPENED,
-                SUM,
-                CAPITALIZATION_TYPE,
-                CURRENCY_CODE,
-                DEPOSIT_TYPE,
-                CLOSE_DATE,
-                INCOME_RATE
-        );
-
-        Deposit createdDeposit = this.deposit.create(depositInfo);
+        Deposit createdDeposit = takeCreatedDeposit();
         assertFalse(createdDeposit.hasSameInfo(new DepositInfo()));
     }
 
     @Test
     void hasSameInfoWhenInputInfoObjectIsNullThenShouldBeFailedResponse() {
-        DepositInfo depositInfo = new DepositInfo(
-                NEW_DEPOSIT,
-                DepositState.OPENED,
-                SUM,
-                CAPITALIZATION_TYPE,
-                CURRENCY_CODE,
-                DEPOSIT_TYPE,
-                CLOSE_DATE,
-                INCOME_RATE
-        );
-
-        Deposit createdDeposit = this.deposit.create(depositInfo);
+        Deposit createdDeposit = takeCreatedDeposit();
         assertFalse(createdDeposit.hasSameInfo(null));
     }
 
     @Test
     void createWhenEverythingGoesRightDepositInfoShouldBeSet() {
-        DepositInfo depositInfo = new DepositInfo(
-                NEW_DEPOSIT,
-                DepositState.OPENED,
-                SUM,
-                CAPITALIZATION_TYPE,
-                CURRENCY_CODE,
-                DEPOSIT_TYPE,
-                CLOSE_DATE,
-                INCOME_RATE
-        );
-
-        Deposit createdDeposit = this.deposit.create(depositInfo);
+        Deposit createdDeposit = takeCreatedDeposit();
         assertTrue(createdDeposit.hasSameInfo(depositInfo));
     }
 
@@ -122,19 +88,7 @@ class DepositTest {
 
     @Test
     void replenishWhenEverythingGoesRightThenDepositSumShouldBeChanged() {
-
-        DepositInfo depositInfo = new DepositInfo(
-                NEW_DEPOSIT,
-                DepositState.OPENED,
-                SUM,
-                CAPITALIZATION_TYPE,
-                CURRENCY_CODE,
-                DEPOSIT_TYPE,
-                CLOSE_DATE,
-                INCOME_RATE
-        );
-
-        Deposit createdDeposit = this.deposit.create(depositInfo);
+        Deposit createdDeposit = takeCreatedDeposit();
         createdDeposit.replenish(9L);
 
         assertEquals(Long.valueOf(10L), createdDeposit.takeSum());
@@ -150,21 +104,13 @@ class DepositTest {
 
     @Test
     void repayWhenEverythingGoesRightThenDepositSumShouldBeChanged() {
-
-        DepositInfo depositInfo = new DepositInfo(
-                NEW_DEPOSIT,
-                DepositState.OPENED,
-                SUM,
-                CAPITALIZATION_TYPE,
-                CURRENCY_CODE,
-                DEPOSIT_TYPE,
-                CLOSE_DATE,
-                INCOME_RATE
-        );
-
-        Deposit createdDeposit = this.deposit.create(depositInfo);
+        Deposit createdDeposit = takeCreatedDeposit();
         createdDeposit.repay();
 
         assertTrue(createdDeposit.isClosed());
+    }
+
+    private Deposit takeCreatedDeposit() {
+        return this.deposit.create(depositInfo);
     }
 }
