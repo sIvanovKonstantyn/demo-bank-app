@@ -3,6 +3,7 @@ package com.home.demos.deposit.infrastructure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.home.demos.deposit.application.services.DepositService;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class KafkaTopicsListener {
 
     @Autowired
+    @Setter
     private DepositService depositService;
 
     @Autowired
@@ -81,10 +83,6 @@ public class KafkaTopicsListener {
         );
 
         wasAnyRepayCall = true;
-    }
-
-    public void setDepositService(DepositService depositService) {
-        this.depositService = depositService;
     }
 
     public Boolean wasCreateSuccessfulCall() {

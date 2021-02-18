@@ -1,12 +1,17 @@
-# Bank deposit service demo:
-https://www.baeldung.com/sonar-qube
-docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
-afc36e5bc60d670dd3d2cff48539e380db745f
+# Bank deposit service demo
 
--- start sonarqube
-docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
+#dev wiki
 
--- jenkins
-docker run -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts
+#cicd wiki
+https://www.baeldung.com/sonar-qube - sonarqube
+jenkins console:http://localhost:8080/ - jenkins console
 
-jenkins console:http://localhost:8080/
+##example of jenkins task:
+![img.png](img.png)
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
+![img_4.png](img_4.png) 
+
+
+
