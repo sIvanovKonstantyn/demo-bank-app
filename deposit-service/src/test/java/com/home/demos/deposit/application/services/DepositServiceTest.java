@@ -59,7 +59,7 @@ class DepositServiceTest {
     }
 
     @Test
-    void createDeposit_whenCreateDepositCalled_thenAllDependedMethodsShouldBeCalled() {
+    void createDepositWhenCreateDepositCalledThenAllDependedMethodsShouldBeCalled() {
         depositService.createDeposit(
                 null,
                 null,
@@ -91,7 +91,7 @@ class DepositServiceTest {
     }
 
     @Test
-    void replenishDeposit_whenReplenishDepositCalled_thenAllDependedMethodsShouldBeCalled() {
+    void replenishDepositWhenReplenishDepositCalledThenAllDependedMethodsShouldBeCalled() {
         depositService.replenishDeposit(
                 null,
                 null,
@@ -112,7 +112,7 @@ class DepositServiceTest {
     }
 
     @Test
-    void replenishDeposit_whenReplenishDepositCalledWithWrongId_thenShouldBeIllegalArgsException() {
+    void replenishDepositWhenReplenishDepositCalledWithWrongIdThenShouldBeIllegalArgsException() {
         Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
         IllegalArgumentException thrownException = Assertions.assertThrows(
@@ -125,11 +125,10 @@ class DepositServiceTest {
         );
 
         Assertions.assertTrue(thrownException.getMessage().contains("deposit not found by id"));
-
     }
 
     @Test
-    void repayDeposit_whenRepayDepositCalled_thenAllDependedMethodsShouldBeCalled() {
+    void repayDepositWhenRepayDepositCalledThenAllDependedMethodsShouldBeCalled() {
         Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
         IllegalArgumentException thrownException = Assertions.assertThrows(
@@ -141,7 +140,7 @@ class DepositServiceTest {
     }
 
     @Test
-    void repayDeposit_whenRepayDepositCalledWithWrongId_thenShouldBeIllegalArgsException() {
+    void repayDepositWhenRepayDepositCalledWithWrongIdThenShouldBeIllegalArgsException() {
         depositService.repayDeposit(null, null);
 
         Mockito.verify(depositRepository, Mockito.times(1)).findById(

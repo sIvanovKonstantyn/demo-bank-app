@@ -19,7 +19,7 @@ class DepositTest {
     private final Deposit deposit = new Deposit();
 
     @Test
-    void hasSameInfo_whenInfoObjectsAreEqual_thenShouldBeSuccessfulResponse() {
+    void hasSameInfoWhenInfoObjectsAreEqualThenShouldBeSuccessfulResponse() {
         DepositInfo depositInfo = new DepositInfo(
                 NEW_DEPOSIT,
                 DepositState.OPENED,
@@ -31,12 +31,12 @@ class DepositTest {
                 INCOME_RATE
         );
 
-        Deposit deposit = this.deposit.create(depositInfo);
-        assertTrue(deposit.hasSameInfo(depositInfo));
+        Deposit createdDeposit = this.deposit.create(depositInfo);
+        assertTrue(createdDeposit.hasSameInfo(depositInfo));
     }
 
     @Test
-    void hasSameInfo_whenInfoObjectsAreNotqual_thenShouldBeFailedResponse() {
+    void hasSameInfoWhenInfoObjectsAreNotEqualThenShouldBeFailedResponse() {
         DepositInfo depositInfo = new DepositInfo(
                 NEW_DEPOSIT,
                 DepositState.OPENED,
@@ -48,12 +48,12 @@ class DepositTest {
                 INCOME_RATE
         );
 
-        Deposit deposit = this.deposit.create(depositInfo);
-        assertFalse(deposit.hasSameInfo(new DepositInfo()));
+        Deposit createdDeposit = this.deposit.create(depositInfo);
+        assertFalse(createdDeposit.hasSameInfo(new DepositInfo()));
     }
 
     @Test
-    void hasSameInfo_whenInputInfoObjectIsNull_thenShouldBeFailedResponse() {
+    void hasSameInfoWhenInputInfoObjectIsNullThenShouldBeFailedResponse() {
         DepositInfo depositInfo = new DepositInfo(
                 NEW_DEPOSIT,
                 DepositState.OPENED,
@@ -65,12 +65,12 @@ class DepositTest {
                 INCOME_RATE
         );
 
-        Deposit deposit = this.deposit.create(depositInfo);
-        assertFalse(deposit.hasSameInfo(null));
+        Deposit createdDeposit = this.deposit.create(depositInfo);
+        assertFalse(createdDeposit.hasSameInfo(null));
     }
 
     @Test
-    void create_whenEverythingGoesRight_depositInfoShouldBeSet() {
+    void createWhenEverythingGoesRightDepositInfoShouldBeSet() {
         DepositInfo depositInfo = new DepositInfo(
                 NEW_DEPOSIT,
                 DepositState.OPENED,
@@ -82,12 +82,12 @@ class DepositTest {
                 INCOME_RATE
         );
 
-        Deposit deposit = this.deposit.create(depositInfo);
-        assertTrue(deposit.hasSameInfo(depositInfo));
+        Deposit createdDeposit = this.deposit.create(depositInfo);
+        assertTrue(createdDeposit.hasSameInfo(depositInfo));
     }
 
     @Test
-    void create_whenInfoIsEmpty_illegalArgumentShouldBeThrown() {
+    void createWhenInfoIsEmptyIllegalArgumentShouldBeThrown() {
 
         IllegalArgumentException thrown = assertThrows(
                 IllegalArgumentException.class,
@@ -98,7 +98,7 @@ class DepositTest {
     }
 
     @Test
-    void create_whenInfoIsNull_illegalArgumentShouldBeThrown() {
+    void createWhenInfoIsNullIllegalArgumentShouldBeThrown() {
 
         IllegalArgumentException thrown = assertThrows(
                 IllegalArgumentException.class,
@@ -110,7 +110,7 @@ class DepositTest {
 
 
     @Test
-    void replenish_whenInsideDepositInfoIsNull_thenIllegalStateShouldBeThrown() {
+    void replenishWhenInsideDepositInfoIsNullThenIllegalStateShouldBeThrown() {
 
         IllegalStateException thrown = assertThrows(
                 IllegalStateException.class,
@@ -121,7 +121,7 @@ class DepositTest {
     }
 
     @Test
-    void replenish_whenEverythingGoesRight_thenDepositSumShouldBeChanged() {
+    void replenishWhenEverythingGoesRightThenDepositSumShouldBeChanged() {
 
         DepositInfo depositInfo = new DepositInfo(
                 NEW_DEPOSIT,
@@ -134,25 +134,22 @@ class DepositTest {
                 INCOME_RATE
         );
 
-        Deposit deposit = this.deposit.create(depositInfo);
-        deposit.replenish(9L);
+        Deposit createdDeposit = this.deposit.create(depositInfo);
+        createdDeposit.replenish(9L);
 
-        assertEquals(Long.valueOf(10L), deposit.takeSum());
+        assertEquals(Long.valueOf(10L), createdDeposit.takeSum());
     }
 
     @Test
-    void repay_whenInsideDepositInfoIsNull_thenIllegalStateShouldBeThrown() {
+    void repayWhenInsideDepositInfoIsNullThenIllegalStateShouldBeThrown() {
 
-        IllegalStateException thrown = assertThrows(
-                IllegalStateException.class,
-                () -> deposit.repay()
-        );
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, deposit::repay);
 
         assertTrue(thrown.getMessage().contains("deposit info should be present"));
     }
 
     @Test
-    void repay_whenEverythingGoesRight_thenDepositSumShouldBeChanged() {
+    void repayWhenEverythingGoesRightThenDepositSumShouldBeChanged() {
 
         DepositInfo depositInfo = new DepositInfo(
                 NEW_DEPOSIT,
@@ -165,9 +162,9 @@ class DepositTest {
                 INCOME_RATE
         );
 
-        Deposit deposit = this.deposit.create(depositInfo);
-        deposit.repay();
+        Deposit createdDeposit = this.deposit.create(depositInfo);
+        createdDeposit.repay();
 
-        assertTrue(deposit.isClosed());
+        assertTrue(createdDeposit.isClosed());
     }
 }

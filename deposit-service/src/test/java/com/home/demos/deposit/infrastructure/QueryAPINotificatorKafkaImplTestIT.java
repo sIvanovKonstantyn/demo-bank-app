@@ -71,7 +71,7 @@ class QueryAPINotificatorKafkaImplTestIT {
     }
 
     @Test
-    void notify_WhenAllMessageTypesWasSent_thenAllMessagesShouldBeReceivedByConsumer() {
+    void notifyWhenAllMessageTypesWasSentThenAllMessagesShouldBeReceivedByConsumer() {
 
         DepositCreatedMessage createdMessage = new DepositCreatedMessage("createdMessage", new Deposit());
         DepositChangedMessage changedMessage = new DepositChangedMessage("changedMessage", new Deposit());

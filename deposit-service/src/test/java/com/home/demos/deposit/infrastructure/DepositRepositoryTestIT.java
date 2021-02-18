@@ -24,12 +24,11 @@ class DepositRepositoryTestIT {
     private static final int CURRENCY_CODE = 840;
     private static final int INCOME_RATE = 10;
 
-
     @Autowired
     private DepositRepository depositRepository;
 
     @Test
-    void save_whenSavingWasSuccessful_thenSavedDepositShouldNotBeEmpty() {
+    void saveWhenSavingWasSuccessfulThenSavedDepositShouldNotBeEmpty() {
         DepositInfo depositInfo = new DepositInfo(
                 TEST_DEPOSIT,
                 DepositState.OPENED,
@@ -41,14 +40,14 @@ class DepositRepositoryTestIT {
                 INCOME_RATE
         );
 
-        Deposit deposit = new Deposit().create(depositInfo);
-        Deposit savedDeposit = depositRepository.save(deposit);
+        Deposit createdDeposit = new Deposit().create(depositInfo);
+        Deposit savedDeposit = depositRepository.save(createdDeposit);
 
         Assertions.assertFalse(savedDeposit.isEmpty());
     }
 
     @Test
-    void save_whenSaveExistingDepositWithNewInfo_thenItsInfoShouldBeUpdated() {
+    void saveWhenSaveExistingDepositWithNewInfoThenItsInfoShouldBeUpdated() {
         DepositInfo depositInfo = new DepositInfo(
                 TEST_DEPOSIT,
                 DepositState.OPENED,
@@ -70,7 +69,7 @@ class DepositRepositoryTestIT {
     }
 
     @Test
-    void findById_whenDataIsPresentInDB_thenDepositShouldBeFound() {
+    void findByIdWhenDataIsPresentInDBThenDepositShouldBeFound() {
 
         DepositID id = new DepositID(System.currentTimeMillis());
 
@@ -94,7 +93,7 @@ class DepositRepositoryTestIT {
     }
 
     @Test
-    void findById_whenDataIsNotPresentInDB_thenDepositShouldNotBeFound() {
+    void findByIdWhenDataIsNotPresentInDBThenDepositShouldNotBeFound() {
         DepositID id = new DepositID(System.currentTimeMillis());
 
         Optional<Deposit> foundDeposit = depositRepository.findById(id);
@@ -103,7 +102,7 @@ class DepositRepositoryTestIT {
     }
 
     @Test
-    void findAll_whenDataIsPresentInDB_thenShouldBeSomeItemsInResponse() {
+    void findAllWhenDataIsPresentInDBThenShouldBeSomeItemsInResponse() {
         DepositInfo depositInfo = new DepositInfo(
                 TEST_DEPOSIT,
                 DepositState.OPENED,
@@ -115,8 +114,8 @@ class DepositRepositoryTestIT {
                 INCOME_RATE
         );
 
-        Deposit deposit = new Deposit().create(depositInfo);
-        depositRepository.save(deposit);
+        Deposit createdDeposit = new Deposit().create(depositInfo);
+        depositRepository.save(createdDeposit);
 
         List<Deposit> items = depositRepository.findAll();
 
@@ -124,7 +123,7 @@ class DepositRepositoryTestIT {
     }
 
     @Test
-    void findAll_whenDataIsNotPresentInDB_thenShouldBeEmptyListAsResponse() {
+    void findAllWhenDataIsNotPresentInDBThenShouldBeEmptyListAsResponse() {
         depositRepository.deleteAll();
 
         List<Deposit> items = depositRepository.findAll();

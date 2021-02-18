@@ -12,7 +12,7 @@ class DepositFactoryTest {
     private final DepositFactory depositFactory = new DepositFactory();
 
     @Test
-    void createNewDeposit() {
+    void createNewDepositWhenSuccessfulCreationThenDepositShouldBeInRightStatus() {
         Deposit createdDeposit = depositFactory.createNewDeposit(
                 "new deposit",
                 1L,
