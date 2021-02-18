@@ -1,12 +1,11 @@
 package com.home.demos.deposit.application.factories;
 
 import com.home.demos.deposit.domain.Deposit;
-import com.home.demos.deposit.domain.DepositState;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DepositFactoryTest {
 

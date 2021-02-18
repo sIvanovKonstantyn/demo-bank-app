@@ -8,19 +8,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DepositTest {
 
-    private Deposit deposit = new Deposit();
+    private static final String DEPOSIT_TYPE = "depositType";
+    private static final String NEW_DEPOSIT = "new deposit";
+    private static final String CAPITALIZATION_TYPE = "capitalizationType";
+    private static final long SUM = 1L;
+    private static final LocalDateTime CLOSE_DATE = LocalDateTime.now();
+    private static final int CURRENCY_CODE = 840;
+    private static final int INCOME_RATE = 1;
+
+    private final Deposit deposit = new Deposit();
 
     @Test
     void hasSameInfo_whenInfoObjectsAreEqual_thenShouldBeSuccessfulResponse() {
         DepositInfo depositInfo = new DepositInfo(
-                "new deposit",
+                NEW_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "capitalizationType",
-                840,
-                "depositType",
-                LocalDateTime.now(),
-                1
+                SUM,
+                CAPITALIZATION_TYPE,
+                CURRENCY_CODE,
+                DEPOSIT_TYPE,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = this.deposit.create(depositInfo);
@@ -30,14 +38,14 @@ class DepositTest {
     @Test
     void hasSameInfo_whenInfoObjectsAreNotqual_thenShouldBeFailedResponse() {
         DepositInfo depositInfo = new DepositInfo(
-                "new deposit",
+                NEW_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "capitalizationType",
-                840,
-                "depositType",
-                LocalDateTime.now(),
-                1
+                SUM,
+                CAPITALIZATION_TYPE,
+                CURRENCY_CODE,
+                DEPOSIT_TYPE,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = this.deposit.create(depositInfo);
@@ -47,14 +55,14 @@ class DepositTest {
     @Test
     void hasSameInfo_whenInputInfoObjectIsNull_thenShouldBeFailedResponse() {
         DepositInfo depositInfo = new DepositInfo(
-                "new deposit",
+                NEW_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "capitalizationType",
-                840,
-                "depositType",
-                LocalDateTime.now(),
-                1
+                SUM,
+                CAPITALIZATION_TYPE,
+                CURRENCY_CODE,
+                DEPOSIT_TYPE,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = this.deposit.create(depositInfo);
@@ -64,14 +72,14 @@ class DepositTest {
     @Test
     void create_whenEverythingGoesRight_depositInfoShouldBeSet() {
         DepositInfo depositInfo = new DepositInfo(
-                "new deposit",
+                NEW_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "capitalizationType",
-                840,
-                "depositType",
-                LocalDateTime.now(),
-                1
+                SUM,
+                CAPITALIZATION_TYPE,
+                CURRENCY_CODE,
+                DEPOSIT_TYPE,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = this.deposit.create(depositInfo);
@@ -116,14 +124,14 @@ class DepositTest {
     void replenish_whenEverythingGoesRight_thenDepositSumShouldBeChanged() {
 
         DepositInfo depositInfo = new DepositInfo(
-                "new deposit",
+                NEW_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "capitalizationType",
-                840,
-                "depositType",
-                LocalDateTime.now(),
-                1
+                SUM,
+                CAPITALIZATION_TYPE,
+                CURRENCY_CODE,
+                DEPOSIT_TYPE,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = this.deposit.create(depositInfo);
@@ -147,14 +155,14 @@ class DepositTest {
     void repay_whenEverythingGoesRight_thenDepositSumShouldBeChanged() {
 
         DepositInfo depositInfo = new DepositInfo(
-                "new deposit",
+                NEW_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "capitalizationType",
-                840,
-                "depositType",
-                LocalDateTime.now(),
-                1
+                SUM,
+                CAPITALIZATION_TYPE,
+                CURRENCY_CODE,
+                DEPOSIT_TYPE,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = this.deposit.create(depositInfo);

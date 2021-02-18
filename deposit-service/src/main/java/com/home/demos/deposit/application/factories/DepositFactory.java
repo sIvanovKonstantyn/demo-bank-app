@@ -3,7 +3,6 @@ package com.home.demos.deposit.application.factories;
 import com.home.demos.deposit.domain.Deposit;
 import com.home.demos.deposit.domain.DepositInfo;
 import com.home.demos.deposit.domain.DepositState;
-import com.home.demos.deposit.infrastructure.DepositCreatedMessage;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

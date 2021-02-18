@@ -1,14 +1,11 @@
 package com.home.demos.deposit.infrastructure;
 
-import com.home.demos.deposit.DepositApplication;
 import com.home.demos.deposit.domain.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -19,20 +16,29 @@ import java.util.Optional;
 @SpringBootTest("db-test")
 class DepositRepositoryTestIT {
 
+    private static final String TEST_DEPOSIT = "test deposit";
+    private static final long SUM = 1L;
+    private static final String ADD_TO_DEPOSIT = "add to deposit";
+    private static final String UNCLOSED = "unclosed";
+    private static final LocalDateTime CLOSE_DATE = LocalDateTime.of(2100, 1, 1, 0, 0);
+    private static final int CURRENCY_CODE = 840;
+    private static final int INCOME_RATE = 10;
+
+
     @Autowired
     private DepositRepository depositRepository;
 
     @Test
     void save_whenSavingWasSuccessful_thenSavedDepositShouldNotBeEmpty() {
         DepositInfo depositInfo = new DepositInfo(
-                "test deposit",
+                TEST_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "add to deposit",
-                840,
-                "unclosed",
-                LocalDateTime.of(2100, 1, 1, 0, 0),
-                10
+                SUM,
+                ADD_TO_DEPOSIT,
+                CURRENCY_CODE,
+                UNCLOSED,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = new Deposit().create(depositInfo);
@@ -44,14 +50,14 @@ class DepositRepositoryTestIT {
     @Test
     void save_whenSaveExistingDepositWithNewInfo_thenItsInfoShouldBeUpdated() {
         DepositInfo depositInfo = new DepositInfo(
-                "test deposit",
+                TEST_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "add to deposit",
-                840,
-                "unclosed",
-                LocalDateTime.of(2100, 1, 1, 0, 0),
-                10
+                SUM,
+                ADD_TO_DEPOSIT,
+                CURRENCY_CODE,
+                UNCLOSED,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit initialDeposit = new Deposit().create(depositInfo);
@@ -69,14 +75,14 @@ class DepositRepositoryTestIT {
         DepositID id = new DepositID(System.currentTimeMillis());
 
         DepositInfo depositInfo = new DepositInfo(
-                "test deposit",
+                TEST_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "add to deposit",
-                840,
-                "unclosed",
-                LocalDateTime.of(2100, 1, 1, 0, 0),
-                10
+                SUM,
+                ADD_TO_DEPOSIT,
+                CURRENCY_CODE,
+                UNCLOSED,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = new Deposit().create(depositInfo, id);
@@ -99,14 +105,14 @@ class DepositRepositoryTestIT {
     @Test
     void findAll_whenDataIsPresentInDB_thenShouldBeSomeItemsInResponse() {
         DepositInfo depositInfo = new DepositInfo(
-                "test deposit",
+                TEST_DEPOSIT,
                 DepositState.OPENED,
-                1L,
-                "add to deposit",
-                840,
-                "unclosed",
-                LocalDateTime.of(2100, 1, 1, 0, 0),
-                10
+                SUM,
+                ADD_TO_DEPOSIT,
+                CURRENCY_CODE,
+                UNCLOSED,
+                CLOSE_DATE,
+                INCOME_RATE
         );
 
         Deposit deposit = new Deposit().create(depositInfo);
