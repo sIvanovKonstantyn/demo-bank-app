@@ -1,0 +1,15 @@
+server:
+  port: 8888
+
+spring:
+  profiles:
+    active: native
+  security:
+    user:
+      name: user
+      password: password
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/shared
