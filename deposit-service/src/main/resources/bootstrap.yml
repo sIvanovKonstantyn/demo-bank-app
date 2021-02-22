@@ -1,8 +1,6 @@
 spring:
-  application:
-    name: app1
   profiles:
-    active: test
+    active: main
   cloud:
     config:
       uri: http://localhost:8888
