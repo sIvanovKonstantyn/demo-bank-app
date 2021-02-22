@@ -1,4 +1,4 @@
-package com.home.demos.deposit.infrastructure.configuration;
+package com.home.demos.queryapi.listeners.configuration;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -23,7 +23,7 @@ public class KafkaConsumerConfiguration {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String>
-    createDepositCommandsKafkaListenerContainerFactory() {
+    depositsCommandsResultsKafkaListenerContainerFactory() {
 
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
