@@ -1,5 +1,5 @@
 rootProject.name = 'demo-bank-app'
-include 'ui'
+include 'gateway'
 include 'query-api-service'
 include 'deposit-service'
 include 'config-server'
