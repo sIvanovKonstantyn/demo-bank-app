@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @Profile({"main", "kafka-test"})
 public class KafkaTopicsListener {
@@ -30,10 +32,14 @@ public class KafkaTopicsListener {
             containerFactory = "depositsCommandsResultsKafkaListenerContainerFactory")
     public void createdDepositsCommandListener(String createdDepositString) throws JsonProcessingException {
 
+        System.out.printf("%s: deposit message received from createdDeposits: %s%n", LocalDateTime.now(), createdDepositString);
+
         DepositCommandResult createDepositResult = mapper.readValue(
                 createdDepositString,
                 DepositCommandResult.class
         );
+
+        System.out.printf("%s: deposit message deserialized: %s%n", LocalDateTime.now(), createDepositResult);
 
         depositService.saveDepositCommandResult(createDepositResult);
 

@@ -1,21 +1,23 @@
 spring:
+  profiles:
+    active: "main"
   data:
     mongodb:
-      uri: "mongodb://root:root@localhost:27017/test_db"
+      uri: ${DEPOSIT_QUERY_RESULTS_DATASOURCE_URL:mongodb://test:test@192.168.3.27:27017/deposit_query_api_db}
 
-port: 8082
+server:
+  port: 8082
 
 kafka:
-  bootstrapAddress: localhost:9093
+  bootstrapAddress:  ${KAFKA_ADDRESS:localhost:9092}
   consumer:
     auto-offset-reset: earliest
-    group-id: baeldung
 
 message:
   topic:
     created-deposits:
-      name: createdDeposits
+      name: ${DEPOSIT_CREATED_DEPOSITS_TOPIC_NAME:createdDeposits}
     changed-deposits:
-      name: changedDeposits
+      name: ${DEPOSIT_CHANGED_DEPOSITS_TOPIC_NAME:changedDeposits}
     removed-deposits:
-      name: removedDeposits
+      name: ${DEPOSIT_REMOVED_DEPOSITS_TOPIC_NAME:removedDeposits}

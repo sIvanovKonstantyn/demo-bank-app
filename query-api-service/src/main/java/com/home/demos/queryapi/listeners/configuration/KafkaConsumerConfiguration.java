@@ -65,7 +65,7 @@ public class KafkaConsumerConfiguration {
                 StringDeserializer.class);
         props.put(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                JsonDeserializer.class);
+                StringDeserializer.class);
 
         props.put(
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,

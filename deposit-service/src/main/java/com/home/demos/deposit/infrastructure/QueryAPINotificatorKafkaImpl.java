@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @Profile({"main", "kafka-test"})
 public class QueryAPINotificatorKafkaImpl implements QueryAPINotificator {
@@ -26,6 +28,7 @@ public class QueryAPINotificatorKafkaImpl implements QueryAPINotificator {
     @Override
     public void notify(DepositCreatedMessage message) {
         kafkaTemplate.send(createdDepositsTopicName, message);
+        System.out.printf("%s: deposit send to createdDeposits: %s%n", LocalDateTime.now(), message);
     }
 
     @Override

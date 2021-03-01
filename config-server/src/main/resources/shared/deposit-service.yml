@@ -4,7 +4,7 @@ server:
   port: 8081
 
 kafka:
-  bootstrapAddress: ${KAFKA_ADDRESS:localhost:9093}
+  bootstrapAddress: ${KAFKA_ADDRESS:localhost:9092}
 
 message:
   topic:
@@ -16,9 +16,11 @@ message:
       name: ${DEPOSIT_REMOVED_DEPOSITS_TOPIC_NAME:removedDeposits}
 
 spring:
+  profiles:
+    active: "main"
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DEPOSIT_DB_DATASOURCE_URL:jdbc:postgresql://localhost:5432/deposit-service-db}
+    url: ${DEPOSIT_DB_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
     username: ${DEPOSIT_DB_DATASOURCE_USER:postgres}
     password: ${DEPOSIT_DB_DATASOURCE_PASSWORD:postgres}
   jpa:

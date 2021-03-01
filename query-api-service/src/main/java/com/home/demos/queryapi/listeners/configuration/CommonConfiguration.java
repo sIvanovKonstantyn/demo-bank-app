@@ -1,4 +1,4 @@
-package com.home.demos.deposit.infrastructure.configuration;
+package com.home.demos.queryapi.listeners.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +14,8 @@ public class CommonConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         mapper.registerModule(new Jdk8Module())
                 .registerModule(new JavaTimeModule());
 

@@ -46,8 +46,10 @@ public class DepositService {
                 closeDate,
                 incomeRate
         );
+        System.out.printf("%s: deposit created: %s%n", LocalDateTime.now(), createdDeposit);
 
         final Deposit savedDeposit = depositRepository.save(createdDeposit);
+        System.out.printf("%s: deposit saved: %s%n", LocalDateTime.now(), savedDeposit);
 
         queryAPINotificator.notify(new DepositCreatedMessage(requestID, savedDeposit));
     }
