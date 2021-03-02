@@ -3,6 +3,6 @@ spring:
     name: gateway
   cloud:
     config:
-      uri: http://localhost:8888
-      username: user
-      password: password
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      username: ${CONFIG_SERVER_USER:user}
+      password: ${CONFIG_SERVER_PASSWORD:password}
