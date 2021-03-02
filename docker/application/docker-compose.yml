@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  deposit-service:
+    image: svosh/deposit-service:latest
+    ports:
+      - 8081:8081
+    restart: always
+  query-api-service:
+    image: svosh/query-api-service:latest
+    ports:
+      - 8082:8082
+    restart: always
+  gateway:
+    image: svosh/gateway:latest
+    ports:
+      - 8083:8083
+    restart: always
