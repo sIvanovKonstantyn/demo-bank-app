@@ -5,13 +5,25 @@ services:
     ports:
       - 8081:8081
     restart: always
+    environment:
+      - CONFIG_SERVER_URL=http://192.168.3.27:8888
+      - CONFIG_SERVER_USER=user
+      - CONFIG_SERVER_PASSWORD=password
   query-api-service:
     image: svosh/query-api-service:latest
     ports:
       - 8082:8082
     restart: always
+    environment:
+      - CONFIG_SERVER_URL=http://192.168.3.27:8888
+      - CONFIG_SERVER_USER=user
+      - CONFIG_SERVER_PASSWORD=password
   gateway:
     image: svosh/gateway:latest
     ports:
       - 8083:8083
     restart: always
+    environment:
+      - CONFIG_SERVER_URL=http://192.168.3.27:8888
+      - CONFIG_SERVER_USER=user
+      - CONFIG_SERVER_PASSWORD=password

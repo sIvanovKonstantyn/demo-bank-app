@@ -75,10 +75,14 @@ public class KafkaTopicsListener {
             containerFactory = "repayDepositCommandsKafkaListenerContainerFactory")
     public void repayDepositCommandListener(String repayDepositCommandString) throws JsonProcessingException {
 
+        System.out.println("--- received repayDepositCommandString... " + repayDepositCommandString);
+
         RepayDepositCommand repayDepositCommand = mapper.readValue(
                 repayDepositCommandString,
                 RepayDepositCommand.class
         );
+
+        System.out.println("depositService:  " + depositService);
 
         depositService.repayDeposit(
                 repayDepositCommand.getRequestID(),

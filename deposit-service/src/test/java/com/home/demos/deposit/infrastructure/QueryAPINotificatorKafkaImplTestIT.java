@@ -73,17 +73,15 @@ class QueryAPINotificatorKafkaImplTestIT {
     @Test
     void notifyWhenAllMessageTypesWasSentThenAllMessagesShouldBeReceivedByConsumer() {
 
-        DepositCreatedMessage createdMessage = new DepositCreatedMessage("createdMessage", new Deposit());
-        DepositChangedMessage changedMessage = new DepositChangedMessage("changedMessage", new Deposit());
-        DepositRemovedMessage removedMessage = new DepositRemovedMessage("removedMessage", new Deposit());
+        DepositCreatedMessage createdMessage = new DepositCreatedMessage("createdMessage".concat(UUID.randomUUID().toString()), new Deposit());
+        DepositChangedMessage changedMessage = new DepositChangedMessage("changedMessage".concat(UUID.randomUUID().toString()), new Deposit());
+        DepositRemovedMessage removedMessage = new DepositRemovedMessage("removedMessage".concat(UUID.randomUUID().toString()), new Deposit());
 
         queryAPINotificatorKafka.notify(createdMessage);
         queryAPINotificatorKafka.notify(changedMessage);
         queryAPINotificatorKafka.notify(removedMessage);
 
         ConsumerRecords<String, DepositMessage> polledData = consumer.poll(Duration.ofMillis(1000));
-
-        Assertions.assertEquals(Integer.valueOf(3), polledData.count());
 
         List<DepositMessage> data = polledData.partitions().stream()
                 .flatMap(topicPartition -> polledData.records(topicPartition).stream())
