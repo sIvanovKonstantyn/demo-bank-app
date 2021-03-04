@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.JUnitUtils;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -68,6 +70,8 @@ class QueryAPINotificatorKafkaImplTestIT {
                 changedDepositsTopicName,
                 removedDepositsTopicName
         ));
+
+        ConsumerRecords<String, DepositMessage> polledData = consumer.poll(Duration.ofMillis(1000));
     }
 
     @Test
@@ -81,7 +85,7 @@ class QueryAPINotificatorKafkaImplTestIT {
         queryAPINotificatorKafka.notify(changedMessage);
         queryAPINotificatorKafka.notify(removedMessage);
 
-        ConsumerRecords<String, DepositMessage> polledData = consumer.poll(Duration.ofMillis(1000));
+        ConsumerRecords<String, DepositMessage> polledData = KafkaTestUtils.getRecords(consumer, 1000, 3);
 
         List<DepositMessage> data = polledData.partitions().stream()
                 .flatMap(topicPartition -> polledData.records(topicPartition).stream())

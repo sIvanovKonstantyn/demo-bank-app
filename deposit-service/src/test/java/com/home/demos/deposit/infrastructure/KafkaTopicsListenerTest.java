@@ -65,7 +65,7 @@ class KafkaTopicsListenerTest {
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "some-group");
 
         Consumer<String, String> consumer = new KafkaConsumer<>(consumerProps);
-        consumer.subscribe(Arrays.asList("repayDepositCommands"));
+        consumer.subscribe(Arrays.asList("repayDepositCommands", "createDepositCommands", "replenishDepositCommands"));
 
         consumer.poll(Duration.ofMillis(1000));
 

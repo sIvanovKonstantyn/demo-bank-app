@@ -1,4 +1,10 @@
 spring:
+  profiles:
+    active: main
+
+---
+spring:
+  profiles: main
   application:
     name: query-api-service
   cloud:
@@ -6,3 +12,29 @@ spring:
       uri: ${CONFIG_SERVER_URL:http://localhost:8888}
       username: ${CONFIG_SERVER_USER:user}
       password: ${CONFIG_SERVER_PASSWORD:password}
+
+
+
+---
+spring:
+  profiles: kafka-test
+  data:
+    mongodb:
+      uri: "mongodb://root:root@localhost:27017/test_db"
+
+port: 8082
+
+kafka:
+  bootstrapAddress: localhost:9093
+  consumer:
+    auto-offset-reset: earliest
+    group-id: baeldung
+
+message:
+  topic:
+    created-deposits:
+      name: createdDeposits
+    changed-deposits:
+      name: changedDeposits
+    removed-deposits:
+      name: removedDeposits

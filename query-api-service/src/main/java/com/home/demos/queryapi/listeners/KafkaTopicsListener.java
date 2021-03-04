@@ -66,6 +66,8 @@ public class KafkaTopicsListener {
             containerFactory = "repayDepositCommandsKafkaListenerContainerFactory")
     public void removedDepositsCommandListener(String removedDepositString) throws JsonProcessingException {
 
+        System.out.println("removedDepositString: " + removedDepositString);
+
         DepositCommandResult changeDepositResult = mapper.readValue(
                 removedDepositString,
                 DepositCommandResult.class
