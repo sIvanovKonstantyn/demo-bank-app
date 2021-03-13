@@ -27,6 +27,15 @@ public class KafkaTopicConfiguration {
     @Value(value = "${message.topic.removed-deposits.name}")
     private String removedDepositsTopicName;
 
+    @Value(value = "${message.topic.create-deposit-commands.name}")
+    private String createDepositCommandsTopicName;
+
+    @Value(value = "${message.topic.replenish-deposit-commands.name}")
+    private String replenishDepositCommandsTopicName;
+
+    @Value(value = "${message.topic.repay-deposit-commands.name}")
+    private String repayDepositCommandsTopicName;
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
@@ -49,4 +58,16 @@ public class KafkaTopicConfiguration {
         return new NewTopic(removedDepositsTopicName, 1, (short) 1);
     }
 
+    @Bean
+    public NewTopic createDepositCommandsTopic() {
+        return new NewTopic(createDepositCommandsTopicName, 1, (short) 1);
+    }
+    @Bean
+    public NewTopic replenishDepositCommandsTopic() {
+        return new NewTopic(replenishDepositCommandsTopicName, 1, (short) 1);
+    }
+    @Bean
+    public NewTopic repayDepositCommandsTopic() {
+        return new NewTopic(repayDepositCommandsTopicName, 1, (short) 1);
+    }
 }

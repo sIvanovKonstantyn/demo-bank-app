@@ -9,7 +9,7 @@ server:
   port: 8082
 
 kafka:
-  bootstrapAddress:  ${KAFKA_ADDRESS:localhost:9092}
+  bootstrapAddress:  ${KAFKA_ADDRESS:192.168.3.27:9092}
   consumer:
     auto-offset-reset: earliest
 

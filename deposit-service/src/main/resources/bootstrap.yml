@@ -36,3 +36,9 @@ message:
       name: changedDeposits
     removed-deposits:
       name: removedDeposits
+    create-deposit-commands:
+      name: createDepositCommands
+    replenish-deposit-commands:
+      name: replenishDepositCommands
+    repay-deposit-commands:
+      name: repayDepositCommands
