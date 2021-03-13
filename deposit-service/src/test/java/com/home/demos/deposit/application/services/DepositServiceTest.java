@@ -112,35 +112,29 @@ class DepositServiceTest {
     }
 
     @Test
-    void replenishDepositWhenReplenishDepositCalledWithWrongIdThenShouldBeIllegalArgsException() {
+    void replenishDepositWhenReplenishDepositCalledWithWrongIdThenNotificatorShouldBeCalled() {
         Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-        IllegalArgumentException thrownException = Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> depositService.replenishDeposit(
-                        null,
-                        null,
-                        null
-                )
-        );
+        depositService.replenishDeposit(null,null,null);
 
-        Assertions.assertTrue(thrownException.getMessage().contains("deposit not found by id"));
+        Mockito.verify(queryAPINotificator, Mockito.times(1)).notify(
+                Mockito.any(DepositChangedMessage.class)
+        );
     }
 
     @Test
-    void repayDepositWhenRepayDepositCalledThenAllDependedMethodsShouldBeCalled() {
+    void repayDepositWhenRepayDepositCalledThenNotificatorShouldBeCalled() {
         Mockito.lenient().when(depositRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
-        IllegalArgumentException thrownException = Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> depositService.repayDeposit(null, null)
-        );
+        depositService.repayDeposit(null,null);
 
-        Assertions.assertTrue(thrownException.getMessage().contains("deposit not found by id"));
+        Mockito.verify(queryAPINotificator, Mockito.times(1)).notify(
+                Mockito.any(DepositRemovedMessage.class)
+        );
     }
 
     @Test
-    void repayDepositWhenRepayDepositCalledWithWrongIdThenShouldBeIllegalArgsException() {
+    void repayDepositWhenRepayDepositCalledWithWrongIdAllDependedMethodsShouldBeCalled() {
         depositService.repayDeposit(null, null);
 
         Mockito.verify(depositRepository, Mockito.times(1)).findById(

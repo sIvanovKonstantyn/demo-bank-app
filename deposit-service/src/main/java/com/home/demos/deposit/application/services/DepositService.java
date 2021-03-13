@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-@Profile({"main","application-layer-test"})
+@Profile({"main", "application-layer-test"})
 public class DepositService {
     @Autowired
     private DepositFactory depositFactory;
@@ -37,41 +37,54 @@ public class DepositService {
             Integer incomeRate
     ) {
 
-        final Deposit createdDeposit = depositFactory.createNewDeposit(
-                name,
-                sum,
-                capitalizationType,
-                currencyCode,
-                depositType,
-                closeDate,
-                incomeRate
-        );
+        try {
+            final Deposit createdDeposit = depositFactory.createNewDeposit(
+                    name,
+                    sum,
+                    capitalizationType,
+                    currencyCode,
+                    depositType,
+                    closeDate,
+                    incomeRate
+            );
+            System.out.printf("%s: deposit created: %s%n", LocalDateTime.now(), createdDeposit);
 
-        final Deposit savedDeposit = depositRepository.save(createdDeposit);
+            final Deposit savedDeposit = depositRepository.save(createdDeposit);
+            System.out.printf("%s: deposit saved: %s%n", LocalDateTime.now(), savedDeposit);
 
-        queryAPINotificator.notify(new DepositCreatedMessage(requestID, savedDeposit));
+            queryAPINotificator.notify(new DepositCreatedMessage(requestID, savedDeposit));
+        } catch (Exception e) {
+            queryAPINotificator.notify(new DepositChangedMessage(requestID, new Deposit()));    //todo: generate failed state
+        }
     }
 
     public void replenishDeposit(String requestID, Long depositID, Long sum) {
+        try {
+            final Deposit foundDeposit = depositRepository.findById(new DepositID(depositID))
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("deposit not found by id %s", depositID)));
 
-        final Deposit foundDeposit = depositRepository.findById(new DepositID(depositID))
-                .orElseThrow(() -> new IllegalArgumentException(String.format("deposit not found by id %s", depositID)));
+            foundDeposit.replenish(sum);
 
-        foundDeposit.replenish(sum);
+            final Deposit changedDeposit = depositRepository.save(foundDeposit);
 
-        final Deposit changedDeposit = depositRepository.save(foundDeposit);
-
-        queryAPINotificator.notify(new DepositChangedMessage(requestID, changedDeposit));
+            queryAPINotificator.notify(new DepositChangedMessage(requestID, changedDeposit));
+        } catch (Exception e) {
+            queryAPINotificator.notify(new DepositChangedMessage(requestID, new Deposit()));    //todo: generate failed state
+        }
     }
 
     public void repayDeposit(String requestID, Long depositID) {
-        final Deposit foundDeposit = depositRepository.findById(new DepositID(depositID))
-                .orElseThrow(() -> new IllegalArgumentException(String.format("deposit not found by id %s", depositID)));
+        try {
+            final Deposit foundDeposit = depositRepository.findById(new DepositID(depositID))
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("deposit not found by id %s", depositID)));
 
-        foundDeposit.repay();
+            foundDeposit.repay();
 
-        final Deposit removedDeposit = depositRepository.save(foundDeposit);
+            final Deposit removedDeposit = depositRepository.save(foundDeposit);
 
-        queryAPINotificator.notify(new DepositRemovedMessage(requestID, removedDeposit));
+            queryAPINotificator.notify(new DepositRemovedMessage(requestID, removedDeposit));
+        } catch (Exception e) {
+            queryAPINotificator.notify(new DepositRemovedMessage(requestID, new Deposit()));    //todo: generate failed state
+        }
     }
 }

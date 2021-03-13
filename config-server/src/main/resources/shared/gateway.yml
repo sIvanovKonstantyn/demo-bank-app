@@ -1,0 +1,25 @@
+server:
+  port: 8083
+
+spring:
+  profiles:
+    active: "main"
+
+kafka:
+  bootstrapAddress: ${KAFKA_ADDRESS:192.168.3.27:9092}
+  consumer:
+    auto-offset-reset: earliest
+
+
+message:
+  topic:
+    created-deposits-commands:
+      name: ${DEPOSIT_CREATED_DEPOSITS_COMMANDS_TOPIC_NAME:createDepositCommands}
+    changed-deposits-commands:
+      name: ${DEPOSIT_REPLENISHED_DEPOSITS_COMMANDS_TOPIC_NAME:replenishDepositCommands}
+    removed-deposits-commands:
+      name: ${DEPOSIT_REPAYED_DEPOSITS_COMMANDS_TOPIC_NAME:repayDepositCommands}
+
+deposit:
+  command-results:
+    url: ${DEPOSIT_COMMAND_RESULTS_URL:http://192.168.3.27:8082/deposit-request-api/take-command-result}

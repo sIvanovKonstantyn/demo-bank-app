@@ -1,9 +1,7 @@
 package com.home.demos.deposit.infrastructure.configuration;
 
-import com.home.demos.deposit.application.services.DepositService;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +20,6 @@ public class KafkaConsumerConfiguration {
 
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
-
-    @Autowired
-    private DepositService depositService;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String>

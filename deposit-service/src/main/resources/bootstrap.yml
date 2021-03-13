@@ -1,10 +1,44 @@
 spring:
-  application:
-    name: app1
   profiles:
-    active: test
+    active: main
+
+---
+spring:
+  profiles: main
+  application:
+    name: deposit-service
   cloud:
     config:
-      uri: http://localhost:8888
-      username: user
-      password: password
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      username: ${CONFIG_SERVER_USER:user}
+      password: ${CONFIG_SERVER_PASSWORD:password}
+
+---
+spring:
+  profiles: kafka-test
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1"
+    username: sa
+    password: sa
+
+kafka:
+  bootstrapAddress: localhost:9093
+  consumer:
+    auto-offset-reset: earliest
+    group-id: baeldung
+
+message:
+  topic:
+    created-deposits:
+      name: createdDeposits
+    changed-deposits:
+      name: changedDeposits
+    removed-deposits:
+      name: removedDeposits
+    create-deposit-commands:
+      name: createDepositCommands
+    replenish-deposit-commands:
+      name: replenishDepositCommands
+    repay-deposit-commands:
+      name: repayDepositCommands

@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @Profile({"main", "kafka-test"})
 public class KafkaTopicsListener {
@@ -29,6 +31,7 @@ public class KafkaTopicsListener {
             containerFactory = "createDepositCommandsKafkaListenerContainerFactory")
     public void createDepositCommandListener(String createDepositCommandString) throws JsonProcessingException {
 
+        System.out.printf("%s: deposit command taken: %s%n", LocalDateTime.now(), createDepositCommandString);
         CreateDepositCommand createDepositCommand = mapper.readValue(
                 createDepositCommandString,
                 CreateDepositCommand.class
@@ -72,10 +75,14 @@ public class KafkaTopicsListener {
             containerFactory = "repayDepositCommandsKafkaListenerContainerFactory")
     public void repayDepositCommandListener(String repayDepositCommandString) throws JsonProcessingException {
 
+        System.out.println("--- received repayDepositCommandString... " + repayDepositCommandString);
+
         RepayDepositCommand repayDepositCommand = mapper.readValue(
                 repayDepositCommandString,
                 RepayDepositCommand.class
         );
+
+        System.out.println("depositService:  " + depositService);
 
         depositService.repayDeposit(
                 repayDepositCommand.getRequestID(),

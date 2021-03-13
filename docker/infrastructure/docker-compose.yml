@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  config-server:
+    image: svosh/demo-bankapp-config-server:latest
+    ports:
+      - 8888:8888
+    restart: always
+
+  zookeeper:
+    image: bitnami/zookeeper
+    container_name: cloud-stream-kafka-zookeeper
+    ports:
+      - 2181:2181
+    expose:
+      - "2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    restart: always
+
+  kafka-broker:
+    image: bitnami/kafka
+    container_name: cloud-stream-kafka
+    ports:
+      - 9092:9092
+    expose:
+      - "9092"
+    environment:
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.3.27:9092
+    depends_on:
+      - zookeeper
+    restart: always
+
+  postgres-db:
+    image: postgres
+    container_name: deposit-postgres-db
+    ports:
+      - 5432:5432
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+
+  mongo-db:
+    image: mongo
+    container_name: query-api-mongo-db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MONGO_INITDB_DATABASE=deposit_query_api_db
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - /home/barry/mongodb/database:/data/db
+    ports:
+      - 27017:27017
+    expose:
+      - "27017"
+    restart: always

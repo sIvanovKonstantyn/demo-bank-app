@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.JUnitUtils;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -68,22 +70,22 @@ class QueryAPINotificatorKafkaImplTestIT {
                 changedDepositsTopicName,
                 removedDepositsTopicName
         ));
+
+        ConsumerRecords<String, DepositMessage> polledData = consumer.poll(Duration.ofMillis(1000));
     }
 
     @Test
     void notifyWhenAllMessageTypesWasSentThenAllMessagesShouldBeReceivedByConsumer() {
 
-        DepositCreatedMessage createdMessage = new DepositCreatedMessage("createdMessage", new Deposit());
-        DepositChangedMessage changedMessage = new DepositChangedMessage("changedMessage", new Deposit());
-        DepositRemovedMessage removedMessage = new DepositRemovedMessage("removedMessage", new Deposit());
+        DepositCreatedMessage createdMessage = new DepositCreatedMessage("createdMessage".concat(UUID.randomUUID().toString()), new Deposit());
+        DepositChangedMessage changedMessage = new DepositChangedMessage("changedMessage".concat(UUID.randomUUID().toString()), new Deposit());
+        DepositRemovedMessage removedMessage = new DepositRemovedMessage("removedMessage".concat(UUID.randomUUID().toString()), new Deposit());
 
         queryAPINotificatorKafka.notify(createdMessage);
         queryAPINotificatorKafka.notify(changedMessage);
         queryAPINotificatorKafka.notify(removedMessage);
 
-        ConsumerRecords<String, DepositMessage> polledData = consumer.poll(Duration.ofMillis(1000));
-
-        Assertions.assertEquals(Integer.valueOf(3), polledData.count());
+        ConsumerRecords<String, DepositMessage> polledData = KafkaTestUtils.getRecords(consumer, 1000, 3);
 
         List<DepositMessage> data = polledData.partitions().stream()
                 .flatMap(topicPartition -> polledData.records(topicPartition).stream())

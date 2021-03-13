@@ -1,0 +1,1 @@
+docker build -t svosh/query-api-service .
