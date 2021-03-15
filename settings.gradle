@@ -3,4 +3,5 @@ include 'gateway'
 include 'query-api-service'
 include 'deposit-service'
 include 'config-server'
+include 'end-to-end-tests'
 
