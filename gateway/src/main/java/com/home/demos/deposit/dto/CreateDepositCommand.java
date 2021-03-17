@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CreateDepositCommand {
+public class CreateDepositCommand implements DepositCommand {
     private String requestID;
     private String name;
     private Long sum;

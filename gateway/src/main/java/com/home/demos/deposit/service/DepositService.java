@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.home.demos.deposit.dto.CreateDepositCommand;
-import com.home.demos.deposit.dto.CreateDepositResult;
-import com.home.demos.deposit.dto.Deposit;
-import com.home.demos.deposit.dto.DepositCommandResult;
+import com.home.demos.deposit.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -34,23 +31,23 @@ public class DepositService {
     @Value(value = "${message.topic.created-deposits-commands.name}")
     private String createdDepositCommandTopicName;
 
-    public CreateDepositResult create(Deposit deposit) {
+    public DepositServiceResult create(Deposit deposit) {
         System.out.printf("%s: gateway called with: %s%n", LocalDateTime.now(), deposit);
 
         CreateDepositCommand createDepositCommand = createDepositCommand(deposit);
 
-        sendDepositCommand(createDepositCommand);
+        sendCreateDepositCommand(createDepositCommand);
 
         DepositCommandResult depositCommandResult = takeDepositCommandResult(createDepositCommand);
 
-        return new CreateDepositResult(deposit, depositCommandResult.getResultCode());
+        return new DepositServiceResult(deposit, depositCommandResult.getResultCode());
     }
 
-    private DepositCommandResult takeDepositCommandResult(CreateDepositCommand createDepositCommand) {
+    private DepositCommandResult takeDepositCommandResult(DepositCommand depositCommand) {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         Future<DepositCommandResult> task = executor.submit(
-                () -> takeCommandResultWhenItWillBePresent(createDepositCommand.getRequestID())
+                () -> takeCommandResultWhenItWillBePresent(depositCommand.getRequestID())
         );
 
         DepositCommandResult result;
@@ -66,19 +63,33 @@ public class DepositService {
         return result;
     }
 
-    private void sendDepositCommand(CreateDepositCommand createDepositCommand) {
+    private void sendCreateDepositCommand(CreateDepositCommand createDepositCommand) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new ParameterNamesModule())
-                    .registerModule(new Jdk8Module())
-                    .registerModule(new JavaTimeModule());
-
-            String dataAsString = objectMapper.writer().writeValueAsString(createDepositCommand);
+            String dataAsString = makeJsonString(createDepositCommand);
             depositTopics.send("createDepositCommands", dataAsString);
             System.out.printf("%s: message sent to createDepositCommands: %s%n", LocalDateTime.now(), dataAsString);
         } catch (JsonProcessingException e) {
             System.out.printf("%s: message to createDepositCommands sending error: %s%n", LocalDateTime.now(), e.getMessage());
         }
+    }
+
+    private void sendReplenishDepositCommand(ReplenishDepositCommand replenishDepositCommand) {
+        try {
+            String dataAsString = makeJsonString(replenishDepositCommand);
+            depositTopics.send("replenishDepositCommands", dataAsString);
+            System.out.printf("%s: message sent to replenishDepositCommands: %s%n", LocalDateTime.now(), dataAsString);
+        } catch (JsonProcessingException e) {
+            System.out.printf("%s: message to replenishDepositCommands sending error: %s%n", LocalDateTime.now(), e.getMessage());
+        }
+    }
+
+    private <T>String makeJsonString(T depositCommand) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new ParameterNamesModule())
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule());
+
+        return objectMapper.writer().writeValueAsString(depositCommand);
     }
 
     private CreateDepositCommand createDepositCommand(Deposit deposit) {
@@ -122,5 +133,52 @@ public class DepositService {
         System.out.printf("%s: found result: %s%n", LocalDateTime.now(), foundResult);
 
         return foundResult;
+    }
+
+    public DepositReplenishmentServiceResult replenish(DepositReplenishment depositReplenishment) {
+        System.out.printf("%s: gateway called with: %s%n", LocalDateTime.now(), depositReplenishment);
+
+        ReplenishDepositCommand replenishDepositCommand = replenishDepositCommand(depositReplenishment);
+
+        sendReplenishDepositCommand(replenishDepositCommand);
+
+        DepositCommandResult depositCommandResult = takeDepositCommandResult(replenishDepositCommand);
+
+        return new DepositReplenishmentServiceResult(depositReplenishment, depositCommandResult.getResultCode());
+    }
+
+    private ReplenishDepositCommand replenishDepositCommand(DepositReplenishment depositReplenishment) {
+        String requestID = UUID.randomUUID().toString();
+
+        return new ReplenishDepositCommand(requestID, depositReplenishment);
+    }
+
+
+    public DepositRepaymentServiceResult repay(DepositRepayment depositRepayment) {
+        System.out.printf("%s: gateway called with: %s%n", LocalDateTime.now(), depositRepayment);
+
+        RepayDepositCommand replenishDepositCommand = repayDepositCommand(depositRepayment);
+
+        sendRepaymentDepositCommand(replenishDepositCommand);
+
+        DepositCommandResult depositCommandResult = takeDepositCommandResult(replenishDepositCommand);
+
+        return new DepositRepaymentServiceResult(depositRepayment, depositCommandResult.getResultCode());
+    }
+
+    private RepayDepositCommand repayDepositCommand(DepositRepayment depositRepayment) {
+        String requestID = UUID.randomUUID().toString();
+
+        return new RepayDepositCommand(requestID, depositRepayment);
+    }
+
+    private void sendRepaymentDepositCommand(RepayDepositCommand repayDepositCommand) {
+        try {
+            String dataAsString = makeJsonString(repayDepositCommand);
+            depositTopics.send("repaymentDepositCommands", dataAsString);
+            System.out.printf("%s: message sent to repaymentDepositCommands: %s%n", LocalDateTime.now(), dataAsString);
+        } catch (JsonProcessingException e) {
+            System.out.printf("%s: message to repaymentDepositCommands sending error: %s%n", LocalDateTime.now(), e.getMessage());
+        }
     }
 }
