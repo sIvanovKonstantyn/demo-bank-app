@@ -175,10 +175,10 @@ public class DepositService {
     private void sendRepaymentDepositCommand(RepayDepositCommand repayDepositCommand) {
         try {
             String dataAsString = makeJsonString(repayDepositCommand);
-            depositTopics.send("repaymentDepositCommands", dataAsString);
-            System.out.printf("%s: message sent to repaymentDepositCommands: %s%n", LocalDateTime.now(), dataAsString);
+            depositTopics.send("repayDepositCommands", dataAsString);
+            System.out.printf("%s: message sent to repayDepositCommands: %s%n", LocalDateTime.now(), dataAsString);
         } catch (JsonProcessingException e) {
-            System.out.printf("%s: message to repaymentDepositCommands sending error: %s%n", LocalDateTime.now(), e.getMessage());
+            System.out.printf("%s: message to repayDepositCommands sending error: %s%n", LocalDateTime.now(), e.getMessage());
         }
     }
 }
