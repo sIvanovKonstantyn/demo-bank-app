@@ -42,6 +42,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.1'
     compileOnly 'org.projectlombok:lombok'
 
+    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+
     /*
     * test scope
     * */
