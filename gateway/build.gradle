@@ -15,11 +15,13 @@ configurations {
 
 ext {
     set('springCloudVersion', "2020.0.1")
+    set('keycloakVersion', '12.0.4')
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "org.keycloak.bom:keycloak-adapter-bom:${keycloakVersion}"
     }
 }
 
@@ -45,6 +47,10 @@ dependencies {
 
     implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
     implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+    implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
+
+    implementation 'org.keycloak:keycloak-spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     /*
      * test scope

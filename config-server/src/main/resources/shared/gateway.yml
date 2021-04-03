@@ -23,3 +23,9 @@ message:
 deposit:
   command-results:
     url: ${DEPOSIT_COMMAND_RESULTS_URL:http://192.168.3.27:8082/deposit-request-api/take-command-result}
+
+keycloak:
+  auth-server-url: http://localhost:8080/auth
+  realm: DepositApplicationRealm
+  resource: deposit-app-user
+  public-client: true
