@@ -44,10 +44,26 @@ public class DepositService {
     }
 
     private DepositCommandResult takeDepositCommandResult(DepositCommand depositCommand) {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<DepositCommandResult> task = executor.submit(
-                () -> takeCommandResultWhenItWillBePresent(depositCommand.getRequestID())
+                () -> {
+                    DepositCommandResult depositCommandResult;
+                    while (true) {
+                        depositCommandResult = takeCommandResult(depositCommand.getRequestID());
+                        if (depositCommandResult.getResultCode().equals(0)) {
+                            break;
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+
+                    return depositCommandResult;
+                }
+
         );
 
         DepositCommandResult result;
@@ -56,8 +72,10 @@ public class DepositService {
             result = task.get(10, TimeUnit.SECONDS);
             System.out.printf("%s: deposit command result taken: %s%n", LocalDateTime.now(), result);
         } catch (Exception e) {
-            result = new DepositCommandResult("", 2);
+            result = new DepositCommandResult(depositCommand.getRequestID(), 2);
             System.out.printf("%s: deposit command result taken: TIMEOUT%n", LocalDateTime.now());
+        } finally {
+            task.cancel(true);
         }
 
         return result;
@@ -83,7 +101,7 @@ public class DepositService {
         }
     }
 
-    private <T>String makeJsonString(T depositCommand) throws JsonProcessingException {
+    private <T> String makeJsonString(T depositCommand) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new ParameterNamesModule())
                 .registerModule(new Jdk8Module())
@@ -98,41 +116,19 @@ public class DepositService {
         return new CreateDepositCommand(requestID, deposit);
     }
 
-    private DepositCommandResult takeCommandResultWhenItWillBePresent(String requestID) throws InterruptedException, ExecutionException {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-        ScheduledFuture<DepositCommandResult> scheduledFuture = createTakeResultTask(executor, requestID);
-
-        while (true) {
-            try {
-                if (scheduledFuture.get().getResultCode() == 0) break;
-            } catch (InterruptedException | ExecutionException e) {
-                System.out.printf("%s: found ERROR: %s%n", LocalDateTime.now(), e.getMessage());
-            }
-
-            scheduledFuture = createTakeResultTask(executor, requestID);
-        }
-
-        return scheduledFuture.get();
-    }
-
-    private ScheduledFuture<DepositCommandResult> createTakeResultTask(ScheduledExecutorService executor, String requestID) {
-        return executor.schedule(
-                () -> takeCommandResult(requestID),
-                1,
-                TimeUnit.SECONDS
-        );
-    }
-
     private DepositCommandResult takeCommandResult(String requestID) {
-        System.out.printf("%s: find result for ID %s in url:%s%n", LocalDateTime.now(), requestID, commandResultsUrl);
-        DepositCommandResult foundResult = restTemplate.getForObject(
-                commandResultsUrl.concat("/").concat(requestID),
-                DepositCommandResult.class
-        );
-        System.out.printf("%s: found result: %s%n", LocalDateTime.now(), foundResult);
+        try {
+            System.out.printf("%s: find result for ID %s in url:%s%n", LocalDateTime.now(), requestID, commandResultsUrl);
+            DepositCommandResult foundResult = restTemplate.getForObject(
+                    commandResultsUrl.concat("/").concat(requestID),
+                    DepositCommandResult.class
+            );
+            System.out.printf("%s: found result: %s%n", LocalDateTime.now(), foundResult);
 
-        return foundResult;
+            return foundResult;
+        } catch (Exception e) {
+            return new DepositCommandResult(requestID, 3);
+        }
     }
 
     public DepositReplenishmentServiceResult replenish(DepositReplenishment depositReplenishment) {
